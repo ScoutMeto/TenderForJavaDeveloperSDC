@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 public class CSVReaderService {
@@ -32,15 +33,17 @@ public class CSVReaderService {
         }
 
         // Kontrola správného formátu (yyyymm nebo yyyymmdd) pomocí regex výrazu
-        if (!from.matches("^\\d{6}$") && !from.matches("^\\d{8}$")) {
-            throw new IllegalArgumentException("Chyba: Parametr FROM není ve správném formátu (yyyyMM nebo yyyyMMdd).");
+        if (!from.matches("^\\d{6}$")) {
+            throw new IllegalArgumentException("Chyba: Parametr FROM není ve správném formátu (yyyyMM).");
         }
-        if (!to.matches("^\\d{6}$") && !to.matches("^\\d{8}$")) {
-            throw new IllegalArgumentException("Chyba: Parametr TO není ve správném formátu (yyyyMM nebo yyyyMMdd).");
+        if (!to.matches("^\\d{6}$")) {
+            throw new IllegalArgumentException("Chyba: Parametr TO není ve správném formátu (yyyyMM).");
         }
 
-        LocalDateTime fromDate = LocalDateTime.parse(from + "T0000", formatter);  // Datum FROM
-        LocalDateTime toDate = LocalDateTime.parse(to + "T2359", formatter);      // Datum TO
+        // Parsování zadaných parametrů FROM a TO
+        YearMonth fromDate = YearMonth.parse(from, DateTimeFormatter.ofPattern("yyyyMM"));
+        YearMonth toDate = YearMonth.parse(to, DateTimeFormatter.ofPattern("yyyyMM"));
+
 
         try (Reader reader = new FileReader(filePath);
              CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
@@ -70,11 +73,14 @@ public class CSVReaderService {
                 double value = Double.parseDouble(valueStr); // Převod na číslo
 
                 // Filtrace na základě FROM/TO
-                if (!timestamp.isBefore(fromDate) && !timestamp.isAfter(toDate)) {
+                YearMonth recordYearMonth = YearMonth.from(timestamp);
+                if (!recordYearMonth.isBefore(fromDate) && !recordYearMonth.isAfter(toDate)) {
                     // Předání dat ke zpracování
                     dataProcessor.processData(timestamp, value, day);
                 }
+
             }
         }
+        dataProcessor.logTotalResults();
     }
 }
