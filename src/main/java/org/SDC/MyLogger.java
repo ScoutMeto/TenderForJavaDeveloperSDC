@@ -11,7 +11,4 @@ public class MyLogger {
         logger.info(message);
     }
 
-    public static void logError(String message) {
-        logger.error(message);
-    }
 }
