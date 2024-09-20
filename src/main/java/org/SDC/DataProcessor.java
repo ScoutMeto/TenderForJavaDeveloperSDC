@@ -1,13 +1,19 @@
 package org.SDC;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class DataProcessor {
+
+    private static final Logger logger = LogManager.getLogger(DataProcessor.class);
 
     private long allSeasonValue = 0;  // Celkový součet za období
     private long oneMonthValue = 0; // Součet za měsíc
@@ -16,63 +22,47 @@ public class DataProcessor {
     private long allValuesOfChosenDayInSeason = 0; // Součet za konkrétní den za celé období (from/to)
     private int numberOfChosenDaysInMonth = 0;  // Počet zvolených dní v měsíci
     private Month currentMonth = null;  // Aktuálně zpracovávaný měsíc
-    private LocalDateTime lastProcessedDay = null; // Poslední zpracovaný den
+    private LocalDateTime actualInformationAboutDateTime = null; // Poslední zpracovaný den
 
-    // Mapování dnů a měsíců do češtiny
-    private static final Map<DayOfWeek, String> dayOfWeekMap = new HashMap<>();
-    private static final Map<Month, String> monthMap = new HashMap<>();
+    /*
+    private final int chosenDay;
 
-    static {
-        dayOfWeekMap.put(DayOfWeek.MONDAY, "Pondělí");
-        dayOfWeekMap.put(DayOfWeek.TUESDAY, "Úterý");
-        dayOfWeekMap.put(DayOfWeek.WEDNESDAY, "Středa");
-        dayOfWeekMap.put(DayOfWeek.THURSDAY, "Čtvrtek");
-        dayOfWeekMap.put(DayOfWeek.FRIDAY, "Pátek");
-        dayOfWeekMap.put(DayOfWeek.SATURDAY, "Sobota");
-        dayOfWeekMap.put(DayOfWeek.SUNDAY, "Neděle");
-
-        monthMap.put(Month.JANUARY, "Leden");
-        monthMap.put(Month.FEBRUARY, "Únor");
-        monthMap.put(Month.MARCH, "Březen");
-        monthMap.put(Month.APRIL, "Duben");
-        monthMap.put(Month.MAY, "Květen");
-        monthMap.put(Month.JUNE, "Červen");
-        monthMap.put(Month.JULY, "Červenec");
-        monthMap.put(Month.AUGUST, "Srpen");
-        monthMap.put(Month.SEPTEMBER, "Září");
-        monthMap.put(Month.OCTOBER, "Říjen");
-        monthMap.put(Month.NOVEMBER, "Listopad");
-        monthMap.put(Month.DECEMBER, "Prosinec");
+    public DataProcessor(int chosenDay) {
+        this.chosenDay = chosenDay;
     }
 
+     */
+
     // Zpracování dat
-    public void processData(LocalDateTime timestamp, double value, int chosenDay) {
+    public void processData(LocalDateTime timestamp, double value, int chosenDay, YearMonth theLastMonthYear) {
         Month month = timestamp.getMonth();
-        //DayOfWeek dayOfWeek = timestamp.getDayOfWeek();
+        DayOfWeek dayOfWeek = timestamp.getDayOfWeek();
+        DayOfWeek chosenDayOfWeek = DayOfWeek.of(chosenDay);
+
         int dayOfMonth = timestamp.getDayOfMonth();
 
         // Uložíme poslední zpracovaný den, než změníme měsíc
-        if (lastProcessedDay != null && lastProcessedDay.getMonth() != month) {
+        if (actualInformationAboutDateTime != null && actualInformationAboutDateTime.getMonth() != month) {
             // Než vypíšeme souhrn za měsíc, zkontrolujeme, jestli poslední den měsíce už nebyl zalogován
-            if (lastProcessedDay.getDayOfWeek().getValue() == chosenDay && !lastProcessedDay.toLocalDate().equals(timestamp.toLocalDate())) {
+            if (actualInformationAboutDateTime.getDayOfWeek().getValue() == chosenDay && !actualInformationAboutDateTime.toLocalDate().equals(timestamp.toLocalDate())) {
                 logDailyResults();  // Souhrnný výkon za poslední zvolený den v měsíci
             }
-            logMonthlyResults();  // Souhrn za celý měsíc
+            logMonthlyResults(chosenDayOfWeek);  // Souhrn za celý měsíc
             resetMonthlyData();
         }
 
         // Aktualizace aktuálního měsíce (pouze pokud došlo ke změně měsíce)
-        if (currentMonth == null || !currentMonth.equals(month)) {
+        if (currentMonth == null || currentMonth.equals(month)) {
             currentMonth = month;
         }
 
 
         // Pokud jsme na novém dni, logujeme součet za předchozí den
-        if (lastProcessedDay != null && lastProcessedDay.getDayOfMonth() != dayOfMonth) {
+        if (actualInformationAboutDateTime != null && actualInformationAboutDateTime.getDayOfMonth() != dayOfMonth) {
             // Zkontrolujeme, zda poslední den nebyl posledním dnem v měsíci, který už byl zalogován
-            boolean isLastDayOfMonth = lastProcessedDay.getMonth().length(lastProcessedDay.toLocalDate().isLeapYear()) == lastProcessedDay.getDayOfMonth();
+            boolean isLastDayOfMonth = actualInformationAboutDateTime.getMonth().length(actualInformationAboutDateTime.toLocalDate().isLeapYear()) == actualInformationAboutDateTime.getDayOfMonth();
 
-            if (lastProcessedDay.getDayOfWeek().getValue() == chosenDay && !isLastDayOfMonth) {
+            if (actualInformationAboutDateTime.getDayOfWeek().getValue() == chosenDay && !isLastDayOfMonth) {
             logDailyResults();
             }
             daySum = 0;  // Reset denního součtu
@@ -93,23 +83,28 @@ public class DataProcessor {
         }
 
         // Uložíme poslední zpracovaný den
-        lastProcessedDay = timestamp;
+        actualInformationAboutDateTime = timestamp;
     }
+
+
+
+
 
     // Výpis denních výsledků
     private void logDailyResults() {
-        String dayName = dayOfWeekMap.get(lastProcessedDay.getDayOfWeek());  // Název dne v češtině
-        MyLogger.logInfo("Souhrnný výkon za " + dayName +" " + lastProcessedDay.toLocalDate() + ": " + daySum + " W/m²");
+        String dayName = actualInformationAboutDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("cs"));  // Název dne v češtině
+        logger.info("Souhrnný výkon za " + dayName +" " + actualInformationAboutDateTime.toLocalDate() + ": " + daySum + " W/m²");
     }
 
     // Výpis měsíčních výsledků
-    private void logMonthlyResults() {
-        String monthName = monthMap.get(currentMonth);  // Název měsíce v češtině
-        String dayName = dayOfWeekMap.get(lastProcessedDay.getDayOfWeek());  // Název dne v češtině
-        MyLogger.logInfo("Měsíc: " + monthName + ", Celkový výkon: " + oneMonthValue + " W/m²");
+    private void logMonthlyResults(DayOfWeek chosenDayOfWeek) {
+        String monthName = currentMonth.getDisplayName(TextStyle.FULL, Locale.forLanguageTag("cs")); // Název měsíce v češtině
+        String dayName = chosenDayOfWeek.getDisplayName(TextStyle.FULL, Locale.forLanguageTag("cs"));  // Název dne v češtině
+        int year = actualInformationAboutDateTime.getYear();  // Získání aktuálního roku jako int
+        logger.info("Měsíc: " + monthName + ", Celkový výkon: " + oneMonthValue + " W/m²");
         if (numberOfChosenDaysInMonth > 0) {
             long averageDayValue = allValuesOfChosenDayInOneMonth / numberOfChosenDaysInMonth;
-            MyLogger.logInfo("Průměrný výkon za zvolený den(" + dayName + ") v průběhu měsíce" + "(" + monthName + "): " + averageDayValue + " W/m²");
+            logger.info("Průměrný výkon za zvolený den(" + dayName + ") za měsíc (" + monthName + ") roku " + actualInformationAboutDateTime.getYear() + ": " + averageDayValue + " W/m²");
         }
     }
 
@@ -122,8 +117,8 @@ public class DataProcessor {
 
     // Výpis celkového výsledku za celé období
     public void logTotalResults() {
-        MyLogger.logInfo("Celkový výkon za období: " + allSeasonValue + " W/m²");
-        MyLogger.logInfo("Celkový výkon za celé zvolené období pro zvolené dny: " + allValuesOfChosenDayInSeason + " W/m²");
+        logger.info("Celkový výkon za období: " + allSeasonValue + " W/m²");
+        logger.info("Celkový výkon za celé zvolené období pro zvolené dny: " + allValuesOfChosenDayInSeason + " W/m²");
     }
 }
 

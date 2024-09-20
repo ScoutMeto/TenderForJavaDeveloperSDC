@@ -3,6 +3,8 @@ package org.SDC;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +14,9 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 public class CSVReaderService {
+
+    private static final Logger logger = LogManager.getLogger(CSVReaderService.class);
+
 
     private static final int HEADER_LINES = 10;  // Počet řádků v hlavičce
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
@@ -24,25 +29,10 @@ public class CSVReaderService {
 
     public void readAndProcessCSV(String filePath, String from, String to, int day) throws IOException {
 
-        // Kontrola, zda jsou FROM a TO zadané
-        if (from == null || from.isEmpty()) {
-            throw new IllegalArgumentException("Chyba: Povinný parametr FROM nebyl zadán.");
-        }
-        if (to == null || to.isEmpty()) {
-            throw new IllegalArgumentException("Chyba: Povinný parametr TO nebyl zadán.");
-        }
-
-        // Kontrola správného formátu (yyyymm nebo yyyymmdd) pomocí regex výrazu
-        if (!from.matches("^\\d{6}$")) {
-            throw new IllegalArgumentException("Chyba: Parametr FROM není ve správném formátu (yyyyMM).");
-        }
-        if (!to.matches("^\\d{6}$")) {
-            throw new IllegalArgumentException("Chyba: Parametr TO není ve správném formátu (yyyyMM).");
-        }
-
         // Parsování zadaných parametrů FROM a TO
         YearMonth fromDate = YearMonth.parse(from, DateTimeFormatter.ofPattern("yyyyMM"));
         YearMonth toDate = YearMonth.parse(to, DateTimeFormatter.ofPattern("yyyyMM"));
+        YearMonth theLastMonthYear = toDate;
 
 
         try (Reader reader = new FileReader(filePath);
@@ -65,9 +55,11 @@ public class CSVReaderService {
                 String valueStr = csvRecord.get(1);     // Druhý sloupec (B)
                     if (valueStr == null || valueStr.isEmpty()) { // Prázdné políčko definuj jako 0 (chybějící data)
                         valueStr = "0";
-                    } else if (!valueStr.matches("^[0-9.]+$")) {
-                        throw new IllegalArgumentException("Hodnota náležící k datu " + timestampStr + " obsahuje nepovolené znaky: " + valueStr);
                     }
+
+                    //else if (!valueStr.matches("^[0-9.]+$")) {
+                     //   throw new IllegalArgumentException("Hodnota náležící k datu " + timestampStr + " obsahuje nepovolené znaky: " + valueStr);
+                    //}
 
                 LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
                 double value = Double.parseDouble(valueStr); // Převod na číslo
@@ -76,7 +68,7 @@ public class CSVReaderService {
                 YearMonth recordYearMonth = YearMonth.from(timestamp);
                 if (!recordYearMonth.isBefore(fromDate) && !recordYearMonth.isAfter(toDate)) {
                     // Předání dat ke zpracování
-                    dataProcessor.processData(timestamp, value, day);
+                    dataProcessor.processData(timestamp, value, day, theLastMonthYear);
                 }
 
             }
