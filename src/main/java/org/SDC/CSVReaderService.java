@@ -15,8 +15,6 @@ import java.time.format.DateTimeFormatter;
 
 public class CSVReaderService {
 
-    private static final Logger logger = LogManager.getLogger(CSVReaderService.class);
-
 
     private static final int HEADER_LINES = 10;  // Počet řádků v hlavičce
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
@@ -28,6 +26,9 @@ public class CSVReaderService {
     }
 
     public void readAndProcessCSV(String filePath, String from, String to, int day) throws IOException {
+
+        UserChoicesHandler userChoicesHandler = new UserChoicesHandler();
+        ApplicationRunner applicationRunner = new ApplicationRunner();
 
         // Parsování zadaných parametrů FROM a TO
         YearMonth fromDate = YearMonth.parse(from, DateTimeFormatter.ofPattern("yyyyMM"));
@@ -57,10 +58,6 @@ public class CSVReaderService {
                         valueStr = "0";
                     }
 
-                    //else if (!valueStr.matches("^[0-9.]+$")) {
-                     //   throw new IllegalArgumentException("Hodnota náležící k datu " + timestampStr + " obsahuje nepovolené znaky: " + valueStr);
-                    //}
-
                 LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
                 double value = Double.parseDouble(valueStr); // Převod na číslo
 
@@ -74,5 +71,11 @@ public class CSVReaderService {
             }
         }
         dataProcessor.logTotalResults();
+
+        if (userChoicesHandler.askForRepeatOrExit()) {
+            applicationRunner.run();
+        } else {
+            System.out.println("Program ukončen.");
+        }
     }
 }

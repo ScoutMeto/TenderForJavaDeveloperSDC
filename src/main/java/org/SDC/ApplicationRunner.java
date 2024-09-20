@@ -10,8 +10,8 @@ public class ApplicationRunner {
         CSVReaderService csvReaderService = new CSVReaderService(dataProcessor);
         UserChoicesHandler userChoicesHandler = new UserChoicesHandler();
 
-            String fromDate = userChoicesHandler.askForFromDate();  // Získání hodnoty FROM od uživatele
-            String toDate = userChoicesHandler.askForToDate();      // Získání hodnoty TO od uživatele
+            String fromDate = userChoicesHandler.askForDate("Zadejte počáteční datum ve formátu yyyyMM (6 znaků): ");  // Získání hodnoty FROM od uživatele
+            String toDate = userChoicesHandler.askForDate("Zadejte koncové datum ve formátu yyyyMM (6 znaků): ");      // Získání hodnoty TO od uživatele
             Integer chosenDay = userChoicesHandler.askForDay();     // Získání volitelného dne
 
 

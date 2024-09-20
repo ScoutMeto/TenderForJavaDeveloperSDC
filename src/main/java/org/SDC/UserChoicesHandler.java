@@ -12,44 +12,25 @@ public class UserChoicesHandler {
         this.scanner = new Scanner(System.in);
     }
 
-    public String askForFromDate() {
-        String fromDate;
+    // Univerzální metoda pro zadávání dat
+    public String askForDate(String message) {
+        String dateInput;
         do {
-            System.out.print("Zadejte počáteční datum ve formátu yyyyMM (6 znaků): ");
-            fromDate = scanner.nextLine();
+            System.out.print(message);
+            dateInput = scanner.nextLine();
 
-            if (fromDate.equalsIgnoreCase("exit")) {
+            if (dateInput.equalsIgnoreCase("exit")) {
                 System.out.println("Program byl ukončen.");
                 System.exit(0);
             }
 
-            if (!isValidDate(fromDate)) {
-                System.out.println("Neplatné datum. Datum musí mít 6 znaků a být ve formátu yyyyMM.");
+            if (!isValidDate(dateInput)) {
+                System.out.println("Neplatné datum. Datum musí mít 6 znaků a být ve formátu yyyyMM. Znovu, nebo \"exit\" pro ukončení.");
             }
 
-        } while (!isValidDate(fromDate));
+        } while (!isValidDate(dateInput));
 
-        return fromDate;
-    }
-
-    public String askForToDate() {
-        String fromDate;
-        do {
-            System.out.print("Zadejte koncové datum ve formátu yyyyMM (6 znaků): ");
-            fromDate = scanner.nextLine();
-
-            if (fromDate.equalsIgnoreCase("exit")) {
-                System.out.println("Program byl ukončen.");
-                System.exit(0);
-            }
-
-            if (!isValidDate(fromDate)) {
-                System.out.println("Neplatné datum. Datum musí mít 6 znaků a být ve formátu yyyyMM.");
-            }
-
-        } while (!isValidDate(fromDate));
-
-        return fromDate;
+        return dateInput;
     }
 
 
@@ -93,6 +74,32 @@ public class UserChoicesHandler {
             return true;
         } catch (NumberFormatException e) {
             return false;
+        }
+    }
+
+
+
+    // Metoda pro dotaz na export
+    public boolean askForExportToCSV() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Chcete exportovat výsledky do CSV? (ano/ne): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+        return input.equals("ano");
+    }
+
+    //Metoda pro dotaz na opakování běhu programu nebo ukončení
+    public boolean askForRepeatOrExit() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Chcete zadat nová data (Z) nebo ukončit program (U)?");
+            String userInput = scanner.nextLine().trim().toLowerCase();
+            if (userInput.equals("z")) {
+                return true; // Znovu spustit program
+            } else if (userInput.equals("u")) {
+                return false; // Ukončit program
+            } else {
+                System.out.println("Neplatná volba, zkuste to znovu.");
+            }
         }
     }
 }
