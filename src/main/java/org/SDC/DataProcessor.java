@@ -24,14 +24,6 @@ public class DataProcessor {
     private Month currentMonth = null;  // Aktuálně zpracovávaný měsíc
     private LocalDateTime actualInformationAboutDateTime = null; // Poslední zpracovaný den
 
-    /*
-    private final int chosenDay;
-
-    public DataProcessor(int chosenDay) {
-        this.chosenDay = chosenDay;
-    }
-
-     */
 
     // Zpracování dat
     public void processData(LocalDateTime timestamp, double value, int chosenDay, YearMonth theLastMonthYear) {
