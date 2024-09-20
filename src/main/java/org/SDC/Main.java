@@ -14,7 +14,9 @@ public class Main {
 -nad metodami a pro trídy dokumentační komentáře /** ...
 -komentáře v kódu anglicky
 -uklidit, zarovnat vše, stejné mezery a odsazení
--rozdělit třídu DataProcessor nějak... nevím jak...
+-rozdělit metodu dataProcesser nějak:
+    Celkově ta logika v metodě processData by se dala ještě rozdělit do více menších metod.
+    Jarek má rád, když se ti logika metody vejde na obrazovky a nemusís skorolvoat a jen překlikavaš mezi metodami xD
  */
 
 

@@ -79,7 +79,7 @@ public class UserChoicesHandler {
 
 
 
-    // Metoda pro dotaz na export
+    // Metoda pro dotaz na export - ROZDĚLANÉ
     public boolean askForExportToCSV() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Chcete exportovat výsledky do CSV? (ano/ne): ");
