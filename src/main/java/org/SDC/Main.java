@@ -1,9 +1,19 @@
 package org.SDC;
 
-import java.io.IOException;
-
-
+/**
+ * The Main class serves as the entry point for the application.
+ * It initializes and starts the program by invoking the ApplicationRunner class.
+ *
+ * Author: Matej Pella
+ */
 public class Main {
+
+    /**
+     * The main method is the starting point of the Java application.
+     * It creates an instance of ApplicationRunner and calls the `run` method to begin the program's execution.
+     *
+     * @param args command-line arguments (not used in this application).
+     */
     public static void main(String[] args) {
         new ApplicationRunner().run();
     }
@@ -11,21 +21,16 @@ public class Main {
 
 /*
 Úpravy:
--nad metodami a pro trídy dokumentační komentáře /** ...
--komentáře v kódu anglicky
--uklidit, zarovnat vše, stejné mezery a odsazení
--rozdělit metodu dataProcesser nějak:
-    Celkově ta logika v metodě processData by se dala ještě rozdělit do více menších metod.
-    Jarek má rád, když se ti logika metody vejde na obrazovky a nemusís skorolvoat a jen překlikavaš mezi metodami xD
+-rozdělit metodu dataProcesser:
+    rozdělit do více menších metod ???
  */
 
 
 /*
-Vychytávky?
--export dat do csv
-    -vyřeš export podle myšlenky:
-        Chci, aby CSVReaderService při výpisu na konci pomocí metody dataProcessor.logTotalResults(); při vypsání
-        automaticky připravil soubor dat. Uživatel se při dotazu, zda chce data exportovat,
-        pouze rozhodne, zda soubor uložíme, nebo zatratíme.
-    -pokud je zadaná jakákoliv jiná volba, než uložení dat (tedy konec programu/znovuspuštění programu/volba neukládat data), je soubor zatracen)
+Navrhovaná úprava kódu:
+    Export dat do souboru .csv
+    -soubor "finalDataSet" vytvořit ve složce "resources" automaticky při zahájení dotazu
+    -na základě přijatých parametrů vytvořit hlavičku dokumentu (záleží, zda uživatel zvolí pouze měsíce, nebo přidá také den)
+    -průběžně, spolu s výpisem, exportovat a zapisovat data do souboru (přístup zvolen kvůli paměti)
+    -po ukončení výpisu se uživatele zeptat, zda chce soubor s daty zachovat, nebo má být vymazán
  */
