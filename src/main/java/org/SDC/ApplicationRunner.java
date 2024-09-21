@@ -32,6 +32,9 @@ public class ApplicationRunner {
 
         String fromDate = userChoicesHandler.askForDate("Zadejte počáteční datum ve formátu yyyyMM (6 znaků): ");
         String toDate = userChoicesHandler.askForDate("Zadejte koncové datum ve formátu yyyyMM (6 znaků): ");
+        if (userChoicesHandler.isDateInRightSequence(fromDate, toDate)) {
+            return;
+        }
         Integer chosenDay = userChoicesHandler.askForDay();
 
         try {

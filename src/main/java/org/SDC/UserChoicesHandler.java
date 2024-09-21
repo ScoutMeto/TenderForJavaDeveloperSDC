@@ -1,6 +1,10 @@
 package org.SDC;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+
+import static org.SDC.Main.main;
 
 /**
  * This class is responsible for handling user input, including receiving date ranges, day selection,
@@ -91,6 +95,26 @@ public class UserChoicesHandler {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    /**
+     * Validates the date range provided by the user. Ensures that the `fromDate` is not after the `toDate`.
+     * If the dates are in the wrong order, a message is displayed, and the program is either restarted
+     * or terminated based on user preference.
+     *
+     * @param fromDate The starting date entered by the user.
+     * @param toDate   The ending date entered by the user.
+     *                 <p>
+     *                 If the `fromDate` is after the `toDate`, the method will trigger a message alerting the user and
+     *                 handle the shut down the application.
+     */
+    public boolean isDateInRightSequence(String fromDate, String toDate) {
+        YearMonth from = YearMonth.parse(fromDate, DateTimeFormatter.ofPattern("yyyyMM"));
+        YearMonth to = YearMonth.parse(toDate, DateTimeFormatter.ofPattern("yyyyMM"));
+        if (from.isAfter(to)) {
+            System.out.println("Zadané datum je v nesprávném pořadí. Datum 'from' nemůže být po datu 'to'.");
+        }
+        return true;
     }
 
     /**
