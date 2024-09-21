@@ -35,15 +35,98 @@ public class DataProcessor {
     /**
      * Processes a single row of solar radiation data.
      *
-     * For each data point, it updates the current monthly and seasonal totals,
-     * handles daily and monthly result logging when switching between dates, and
-     * calculates the summary for the selected day of the week (if provided).
+     * This method manages the monthly and daily data logging, updates the current monthly and seasonal totals,
+     * and computes detailed results for a specific day of the week if provided by the user.
+     * It delegates the handling of month and day changes to specialized methods.
      *
-     * @param timestamp The date and time of the data point.
-     * @param value The solar radiation value for the given timestamp.
-     * @param chosenDay Optional: Day of the week (1 = Monday, ..., 7 = Sunday) for additional calculations.
+     * @param timestamp   The date and time of the data point.
+     * @param value       The solar radiation value for the given timestamp.
+     * @param chosenDay   Optional: Day of the week (1 = Monday, ..., 7 = Sunday) for additional calculations.
      * @param theLastMonthYear The last year and month to determine the end of the period.
      */
+    public void processData(LocalDateTime timestamp, double value, Integer chosenDay, YearMonth theLastMonthYear) {
+        int toYear = theLastMonthYear.getYear();
+        Month toMonth = theLastMonthYear.getMonth();
+        Month month = timestamp.getMonth();
+        DayOfWeek chosenDayOfWeek = (chosenDay != null && chosenDay > 0) ? DayOfWeek.of(chosenDay) : null;
+        int dayOfMonth = timestamp.getDayOfMonth();
+
+        // Zpracování měsíční změny
+        handleMonthChange(timestamp, month, chosenDayOfWeek, toYear, toMonth, chosenDay);
+
+        // Zpracování denní změny
+        handleDayChange(timestamp, dayOfMonth, chosenDayOfWeek, toYear, toMonth, chosenDay);
+
+        // Přidání hodnoty do měsíčního a sezónního součtu
+        allSeasonValue += value;
+        oneMonthValue += value;
+
+        // Pokud uživatel zvolil konkrétní den v týdnu, provede detailní analýzu
+        if (chosenDayOfWeek != null && timestamp.getDayOfWeek().getValue() == chosenDay) {
+            daySum += value;
+            allValuesOfChosenDayInOneMonth += value;
+            allValuesOfChosenDayInSeason += value;
+            numberOfChosenDaysInMonth++;
+        }
+
+        actualInformationAboutDateTime = timestamp;
+    }
+
+    /**
+     * Handles logic related to switching between months during data processing.
+     *
+     * This method logs monthly results, resets monthly data when the month changes,
+     * and ensures that daily results are logged for the selected day of the week
+     * before the month transitions.
+     *
+     * @param timestamp        The current data point's timestamp.
+     * @param month            The current month being processed.
+     * @param chosenDayOfWeek   The day of the week chosen by the user for specific analysis (1 = Monday, ..., 7 = Sunday).
+     * @param toYear           The year of the last month to determine the end of the period.
+     * @param toMonth          The month to determine the end of the period.
+     * @param chosenDay        The specific day of the week chosen by the user for detailed analysis.
+     */
+    private void handleMonthChange(LocalDateTime timestamp, Month month, DayOfWeek chosenDayOfWeek, int toYear, Month toMonth, Integer chosenDay) {
+        if (actualInformationAboutDateTime != null && actualInformationAboutDateTime.getMonth() != month) {
+            if (chosenDayOfWeek != null && actualInformationAboutDateTime.getDayOfWeek().getValue() == chosenDay && !actualInformationAboutDateTime.toLocalDate().equals(timestamp.toLocalDate())) {
+                if (!(actualInformationAboutDateTime.getYear() == toYear && actualInformationAboutDateTime.getMonth() == toMonth)) {
+                    logDailyResults();
+                }
+            }
+            logMonthlyResults(chosenDayOfWeek);
+            resetMonthlyData();
+        }
+
+        if (currentMonth == null || !currentMonth.equals(month)) {
+            currentMonth = month;
+        }
+    }
+
+    /**
+     * Handles logic related to switching between days during data processing.
+     *
+     * This method logs daily results for the selected day of the week, resets daily totals when the day changes,
+     * and checks whether the current day is the last day of the month before logging.
+     *
+     * @param timestamp        The current data point's timestamp.
+     * @param dayOfMonth       The current day of the month being processed.
+     * @param chosenDayOfWeek  The day of the week chosen by the user for specific analysis (1 = Monday, ..., 7 = Sunday).
+     * @param toYear           The year of the last month to determine the end of the period.
+     * @param toMonth          The month to determine the end of the period.
+     * @param chosenDay        The specific day of the week chosen by the user for detailed analysis.
+     */
+    private void handleDayChange(LocalDateTime timestamp, int dayOfMonth, DayOfWeek chosenDayOfWeek, int toYear, Month toMonth, Integer chosenDay) {
+        if (actualInformationAboutDateTime != null && actualInformationAboutDateTime.getDayOfMonth() != dayOfMonth) {
+            boolean isLastDayOfMonth = actualInformationAboutDateTime.getMonth().length(actualInformationAboutDateTime.toLocalDate().isLeapYear()) == actualInformationAboutDateTime.getDayOfMonth();
+            if (actualInformationAboutDateTime.getDayOfWeek().getValue() == chosenDay && !isLastDayOfMonth) {
+                if (!(actualInformationAboutDateTime.getYear() == toYear && actualInformationAboutDateTime.getMonth() == toMonth)) {
+                    logDailyResults();
+                }
+            }
+            daySum = 0;
+        }
+    }
+    /*
     public void processData(LocalDateTime timestamp, double value, Integer chosenDay, YearMonth theLastMonthYear) {
 
         int toYear = theLastMonthYear.getYear();
@@ -98,6 +181,7 @@ public class DataProcessor {
 
         actualInformationAboutDateTime = timestamp;
     }
+    */
 
     /**
      * Logs the cumulative results for a specific day.

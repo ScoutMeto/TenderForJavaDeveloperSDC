@@ -20,13 +20,6 @@ public class Main {
 }
 
 /*
-Úpravy:
--rozdělit metodu dataProcesser:
-    rozdělit do více menších metod ???
- */
-
-
-/*
 Navrhovaná úprava kódu:
     Export dat do souboru .csv
     -soubor "finalDataSet" vytvořit ve složce "resources" automaticky při zahájení dotazu
