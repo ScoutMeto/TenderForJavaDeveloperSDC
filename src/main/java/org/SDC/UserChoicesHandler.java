@@ -65,9 +65,11 @@ public class UserChoicesHandler {
                 day = Integer.parseInt(dayInput);
                 if (day < 1 || day > 7) {
                     System.out.println("Neplatný den. Zadejte číslo mezi 1 a 7. \"exit\" pro ukončení.");
+                    day = null;
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Neplatný vstup. Zadejte číslo. \"exit\" pro ukončení.");
+                day = null;
             }
         } while (day == null);
         return day;
