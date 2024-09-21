@@ -15,12 +15,12 @@ import java.time.format.DateTimeFormatter;
  * This class is responsible for reading and processing CSV files containing solar data.
  * It parses the input data based on user-specified date ranges and sends the data
  * to the `DataProcessor` for further calculations.
- *
+ * <p>
  * Author: Matej Pella
  */
 public class CSVReaderService {
 
-    private static final int HEADER_LINES = 10;  // Počet řádků v hlavičce
+    private static final int HEADER_LINES = 10;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
 
     private DataProcessor dataProcessor;

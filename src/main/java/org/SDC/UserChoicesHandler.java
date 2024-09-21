@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * This class is responsible for handling user input, including receiving date ranges, day selection,
  * and whether to repeat the process or exit the program.
- *
+ * <p>
  * Author: Matej Pella
  */
 public class UserChoicesHandler {
