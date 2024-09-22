@@ -106,14 +106,22 @@ public class UserChoicesHandler {
      * @param toDate   The ending date entered by the user.
      *                 <p>
      *                 If the `fromDate` is after the `toDate`, the method will trigger a message alerting the user and
-     *                 handle the shut down the application.
+     *                 handle the repeating ask for date in a right sequence.
      */
     public boolean isDateInRightSequence(String fromDate, String toDate) {
-        YearMonth from = YearMonth.parse(fromDate, DateTimeFormatter.ofPattern("yyyyMM"));
-        YearMonth to = YearMonth.parse(toDate, DateTimeFormatter.ofPattern("yyyyMM"));
-        if (from.isAfter(to)) {
-            System.out.println("Zadané datum je v nesprávném pořadí. Datum 'from' nemůže být po datu 'to'.");
-        }
+        YearMonth from;
+        YearMonth to;
+
+        do {
+            from = YearMonth.parse(fromDate, DateTimeFormatter.ofPattern("yyyyMM"));
+            to = YearMonth.parse(toDate, DateTimeFormatter.ofPattern("yyyyMM"));
+
+            if (from.isAfter(to)) {
+                System.out.println("Zadané datum je v nesprávném pořadí. Datum 'from' nemůže být po datu 'to'. Zadejte nová data.");
+                fromDate = askForDate("Zadejte nové datum 'from' (ve formátu yyyyMM): ");
+                toDate = askForDate("Zadejte nové datum 'to' (ve formátu yyyyMM): ");
+            }
+        } while (from.isAfter(to));
         return true;
     }
 

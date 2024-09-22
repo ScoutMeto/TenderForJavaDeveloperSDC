@@ -23,13 +23,11 @@ public class Main {
 Navrhovaná úprava kódu:
     Export dat do souboru .csv
     -soubor "finalDataSet" vytvořit ve složce "resources" automaticky při zahájení dotazu
+    -ziskem dat se přidá automaticky generovaná přípona tvořena uživateli zadaným rozsahem from/to
     -na základě přijatých parametrů vytvořit hlavičku dokumentu (záleží, zda uživatel zvolí pouze měsíce, nebo přidá také den)
     -průběžně, spolu s výpisem, exportovat a zapisovat data do souboru (přístup zvolen kvůli paměti)
     -po ukončení výpisu se uživatele zeptat, zda chce soubor s daty zachovat, nebo má být vymazán
-    -po uložení nebo vymazání následuje dotaz ohledně zadání nových dat, nebo ukončení programu. V případě zadání nových
-        dat bude název předchozího souboru obohacen o číslo (počínaje 1) a v případě dalších souborů bude číslo
-        inkrementováno (případně bude při potvrzení možnosti uložení dat uživatel vyzván, aby si soubor sám pojmenoval
-        a nevznikali tak duplicity)
+    -po uložení nebo vymazání následuje dotaz ohledně zadání nových dat, nebo ukončení programu
 
     Předělat aplikaci na Springboot aplikaci
     -přidat možnost spouštět z command line s parametry -console nebo -restApi

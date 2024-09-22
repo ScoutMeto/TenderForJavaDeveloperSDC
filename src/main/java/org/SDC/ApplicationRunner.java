@@ -30,11 +30,13 @@ public class ApplicationRunner {
         CSVReaderService csvReaderService = new CSVReaderService(dataProcessor);
         UserChoicesHandler userChoicesHandler = new UserChoicesHandler();
 
-        String fromDate = userChoicesHandler.askForDate("Zadejte počáteční datum ve formátu yyyyMM (6 znaků): ");
-        String toDate = userChoicesHandler.askForDate("Zadejte koncové datum ve formátu yyyyMM (6 znaků): ");
-        if (userChoicesHandler.isDateInRightSequence(fromDate, toDate)) {
-            return;
-        }
+        String fromDate;
+        String toDate;
+
+        do {
+            fromDate = userChoicesHandler.askForDate("Zadejte počáteční datum ve formátu yyyyMM (6 znaků): ");
+            toDate = userChoicesHandler.askForDate("Zadejte koncové datum ve formátu yyyyMM (6 znaků): ");
+        } while (!userChoicesHandler.isDateInRightSequence(fromDate, toDate));
         Integer chosenDay = userChoicesHandler.askForDay();
 
         try {
