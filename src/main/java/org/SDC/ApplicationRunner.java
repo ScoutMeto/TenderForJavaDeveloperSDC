@@ -23,7 +23,6 @@ public class ApplicationRunner {
      * 'from' and 'to' dates in the format YYYYMM, and an optional day.
      * It then processes the CSV file based on the input and outputs the results.
      *
-     * @throws IOException if the CSV file cannot be read or processed.
      */
     public void run() {
         DataProcessor dataProcessor = new DataProcessor();

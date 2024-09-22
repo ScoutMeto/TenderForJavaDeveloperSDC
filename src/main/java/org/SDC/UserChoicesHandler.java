@@ -4,8 +4,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import static org.SDC.Main.main;
-
 /**
  * This class is responsible for handling user input, including receiving date ranges, day selection,
  * and whether to repeat the process or exit the program.
